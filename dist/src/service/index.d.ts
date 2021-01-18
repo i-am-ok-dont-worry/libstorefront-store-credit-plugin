@@ -15,5 +15,16 @@ export declare class StoreCreditService {
      * @returns {StoreCredit} Store credit
      */
     getSingleStoreCredit(storeCreditId: string): Promise<StoreCredit>;
+    /**
+     * Applies selected amount of customer credit to the current cart
+     * @param {number} amount
+     * @returns {Promise<void>}
+     */
+    applyCredit(amount: number): Promise<void>;
+    /**
+     * Cancels customer credit on the current cart
+     * @returns {Promise<void>}
+     */
+    cancelCredit(): Promise<void>;
     constructor(store: AbstractStore<LibstorefrontInnerState>);
 }

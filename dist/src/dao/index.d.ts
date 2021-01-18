@@ -5,5 +5,7 @@ export declare class StoreCreditDao {
         customerId: string;
     } & SearchCriteriaFilter, token: string, storeCode: string): Promise<Task>;
     getSingleStoreCredit(storeCreditId: any, token: string): Promise<Task>;
+    applyCredit(amount: number, cartId: any, token: string): Promise<Task>;
+    cancelCredit(cartId: any, token: string): Promise<Task>;
     constructor(taskQueue: any);
 }

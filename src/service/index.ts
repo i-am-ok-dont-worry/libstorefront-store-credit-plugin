@@ -25,5 +25,22 @@ export class StoreCreditService {
         return this.store.dispatch(StoreCreditThunks.getSingleStoreCredit(storeCreditId));
     }
 
+    /**
+     * Applies selected amount of customer credit to the current cart
+     * @param {number} amount
+     * @returns {Promise<void>}
+     */
+    public applyCredit (amount: number): Promise<void> {
+        return this.store.dispatch(StoreCreditThunks.applyStoreCredit(amount));
+    }
+
+    /**
+     * Cancels customer credit on the current cart
+     * @returns {Promise<void>}
+     */
+    public cancelCredit (): Promise<void> {
+        return this.store.dispatch(StoreCreditThunks.cancelStoreCredit());
+    }
+
     public constructor (@inject(AbstractStore) private store: AbstractStore<LibstorefrontInnerState>) {}
 }

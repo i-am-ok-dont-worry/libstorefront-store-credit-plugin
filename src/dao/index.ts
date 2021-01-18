@@ -37,5 +37,40 @@ export class StoreCreditDao {
         });
     }
 
+    public applyCredit (amount: number, cartId, token: string): Promise<Task> {
+        const query = {
+            amount,
+            cartId,
+            token
+        };
+
+        return this.taskQueue.execute({
+            url: URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/apply?' + qs.stringify(query)),
+            payload: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
+            },
+            silent: true
+        });
+    }
+
+    public cancelCredit (cartId, token: string): Promise<Task> {
+        const query = {
+            cartId,
+            token
+        };
+
+        return this.taskQueue.execute({
+            url: URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/cancel?' + qs.stringify(query)),
+            payload: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
+            },
+            silent: true
+        });
+    }
+
     public constructor(@inject(TaskQueue) private taskQueue) {}
 }

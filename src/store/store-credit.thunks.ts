@@ -32,6 +32,7 @@ export namespace StoreCreditThunks {
 
         } catch (e) {
             Logger.info('Cannot fetch store credits: ', 'STORE-CREDIT-PLUGIN', e.message);
+            throw e;
         }
     };
 
@@ -54,6 +55,52 @@ export namespace StoreCreditThunks {
 
         } catch (e) {
             Logger.info('Cannot fetch store credits: ', 'STORE-CREDIT-PLUGIN', e.message);
+            throw e;
         }
     }
+
+    export const applyStoreCredit = (amount: number) => async (dispatch, getState) => {
+        try {
+            const customer = IOCContainer.get(AbstractStore).getState().user;
+            const cart = IOCContainer.get(AbstractStore).getState().cart;
+            const cartId = cart.cartServerToken;
+            const token = customer.token;
+            if (!cartId) { throw new Error('Cannot apply credit for undefined cart'); }
+            if (!customer || !token || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
+
+            const response = await IOCContainer.get(StoreCreditDao).applyCredit(amount, cartId, token);
+
+            if (response && response.code === HttpStatus.OK) {
+                await StoreCreditThunks.getStoreCredits({});
+                return response.result;
+            } else {
+                throw new Error('Not found');
+            }
+        } catch (e) {
+            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            throw e;
+        }
+    };
+
+    export const cancelStoreCredit = () => async (dispatch, getState) => {
+        try {
+            const customer = IOCContainer.get(AbstractStore).getState().user;
+            const cart = IOCContainer.get(AbstractStore).getState().cart;
+            const cartId = cart.cartServerToken;
+            const token = customer.token;
+            if (!customer || !token || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
+
+            const response = await IOCContainer.get(StoreCreditDao).cancelCredit(cartId, token);
+
+            if (response && response.code === HttpStatus.OK) {
+                await StoreCreditThunks.getStoreCredits({});
+                return response.result;
+            } else {
+                throw new Error('Not found');
+            }
+        } catch (e) {
+            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            throw e;
+        }
+    };
 }

@@ -32,6 +32,8 @@ Plugin registers the [StoreCreditService](https://gitlab.grupakmk.pl/internal/fr
 Service exposes methods:
 * `getStoreCredit ({ sortBy, sortDir, pageSize, currentPage }: SearchCriteriaFilter)` - returns store credit info for currently logged user
 * `getSingleStoreCredit (storeCreditId: string): Promise<StoreCredit>` - returns details about the store credit
+* `applyCredit (amount: number): Promise<void>` - applies credit to the current cart
+* `cancelCredit (): Promise<void>` - cancels credit on the current cart
 
 ## Redux store 
 Plugin adds new state branch `storeCredit` to the original Libstorefront redux store.

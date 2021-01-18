@@ -28,7 +28,7 @@ interface StoreCredit {
 ```
 
 ## Service
-Plugin registers the [StoreCreditService]() that serves as a plugin entry point.
+Plugin registers the [StoreCreditService](https://gitlab.grupakmk.pl/internal/frontend/api/addons/libstorefront-addons/libstorefront-store-credit-plugin/-/blob/master/src/service/index.ts) that serves as a plugin entry point.
 Service exposes methods:
 * `getStoreCredit ({ sortBy, sortDir, pageSize, currentPage }: SearchCriteriaFilter)` - returns store credit info for currently logged user
 * `getSingleStoreCredit (storeCreditId: string): Promise<StoreCredit>` - returns details about the store credit

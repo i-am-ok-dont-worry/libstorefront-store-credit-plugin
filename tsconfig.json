@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "ES5",
+    "declaration": true,
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "outDir": "dist",
+    "lib": [
+      "es2015",
+      "es6",
+      "es2017",
+      "dom"
+    ],
+    "types": [
+      "reflect-metadata",
+      "node",
+      "jest"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "tests"
+  ]
+}

@@ -1,17 +1,45 @@
-# NAMING CONVENTIONS
-* `name` property in package.json should be changed to a module name
-* `description` property in package.json should describe plugin feature
+# Libstorefront Store credit plugin
+Provides registered customers with a flexible credit system. 
+Lets customers spend their credit balance on product purchase.
 
-## Write plugin
-Entry point for plugin should be `index.ts` file. LSF plugin is a default void function 
-that accepts initialized Libstorefront instance.
+## Usage
+To use plugin add a dependency to the LSF lib:
+```javascript
+const LSF = new LibStorefront({
+    plugins: [
+        StoreCreditPlugin
+    ]
+});
+```
 
-Plugin has access to all lsf functionality including IOC container. Dependencies
-can be rebound according to plugin needs.
+and get `StoreCreditService` registered by lib:
+```javascript
+LSF.get(StoreCreditService)
+```
+## Model
+Plugin adds new type `StoreCredit`:
+```javascript
+interface StoreCredit {
+    store_credit_id: number,
+    customer_id: number|string,
+    store_credit: number,
+    store_credit_limit: number
+}
+```
 
-## Build plugin
-Run `npm run build` to build plugin.
-Output can be found in `/dist` catalog.
+## Service
+Plugin registers the [StoreCreditService]() that serves as a plugin entry point.
+Service exposes methods:
+* `getStoreCredit ({ sortBy, sortDir, pageSize, currentPage }: SearchCriteriaFilter)` - returns store credit info for currently logged user
+* `getSingleStoreCredit (storeCreditId: string): Promise<StoreCredit>` - returns details about the store credit
+
+## Redux store 
+Plugin adds new state branch `storeCredit` to the original Libstorefront redux store.
+```javascript
+interface StoreCreditModuleState {
+    current: StoreCredit
+}
+```
 
 ## Test plugin
 Plugin must be tested in isolation. Unit tests can be performed via jest framework

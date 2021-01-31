@@ -1,5 +1,5 @@
 {
-  "name": "libstorefront-store-credit-plugin",
+  "name": "@grupakmk/libstorefront-store-credit-plugin",
   "version": "1.0.0",
   "description": "Store credit plugin for Libstorefront",
   "main": "dist/index.js",

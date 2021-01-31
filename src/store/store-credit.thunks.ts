@@ -13,12 +13,11 @@ export namespace StoreCreditThunks {
     export const getStoreCredits = (filter: SearchCriteriaFilter) => async (dispatch, getState) => {
         try {
             const customer = IOCContainer.get(AbstractStore).getState().user;
-            const token = customer.token;
             const storeCode = StoreViewHandler.currentStoreView().general.store_code;
 
-            if (!customer || !token || !customer.current) { throw new Error('Cannot fetch store credits for unauthorized user'); }
+            if (!customer || !customer.current) { throw new Error('Cannot fetch store credits for unauthorized user'); }
             const customerId = customer.current.id;
-            const response = await IOCContainer.get(StoreCreditDao).getStoreCredit({ customerId, ...filter }, token, storeCode);
+            const response = await IOCContainer.get(StoreCreditDao).getStoreCredit({ customerId, ...filter }, storeCode);
 
             if (response && response.code === HttpStatus.OK) {
                 const { items } = response.result;
@@ -39,10 +38,9 @@ export namespace StoreCreditThunks {
     export const getSingleStoreCredit = (storeCreditId: string) => async (dispatch, getState) => {
         try {
             const customer = IOCContainer.get(AbstractStore).getState().user;
-            const token = customer.token;
 
-            if (!customer || !token || !customer.current) { throw new Error('Cannot fetch store credits for unauthorized user'); }
-            const response = await IOCContainer.get(StoreCreditDao).getSingleStoreCredit(storeCreditId, token);
+            if (!customer || !customer.current) { throw new Error('Cannot fetch store credits for unauthorized user'); }
+            const response = await IOCContainer.get(StoreCreditDao).getSingleStoreCredit(storeCreditId);
 
             if (response && response.code === HttpStatus.OK) {
                 const credit = response.result;
@@ -64,11 +62,10 @@ export namespace StoreCreditThunks {
             const customer = IOCContainer.get(AbstractStore).getState().user;
             const cart = IOCContainer.get(AbstractStore).getState().cart;
             const cartId = cart.cartServerToken;
-            const token = customer.token;
             if (!cartId) { throw new Error('Cannot apply credit for undefined cart'); }
-            if (!customer || !token || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
+            if (!customer || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
 
-            const response = await IOCContainer.get(StoreCreditDao).applyCredit(amount, cartId, token);
+            const response = await IOCContainer.get(StoreCreditDao).applyCredit(amount, cartId);
 
             if (response && response.code === HttpStatus.OK) {
                 await StoreCreditThunks.getStoreCredits({});
@@ -87,13 +84,36 @@ export namespace StoreCreditThunks {
             const customer = IOCContainer.get(AbstractStore).getState().user;
             const cart = IOCContainer.get(AbstractStore).getState().cart;
             const cartId = cart.cartServerToken;
-            const token = customer.token;
-            if (!customer || !token || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
+            if (!customer || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
 
-            const response = await IOCContainer.get(StoreCreditDao).cancelCredit(cartId, token);
+            const response = await IOCContainer.get(StoreCreditDao).cancelCredit(cartId);
 
             if (response && response.code === HttpStatus.OK) {
                 await StoreCreditThunks.getStoreCredits({});
+                return response.result;
+            } else {
+                throw new Error('Not found');
+            }
+        } catch (e) {
+            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            throw e;
+        }
+    };
+
+    export const getMyStoreCredit = () => async (dispatch, getState) => {
+        try {
+            const customer = IOCContainer.get(AbstractStore).getState().user;
+            const storeCode = StoreViewHandler.currentStoreView().general.store_code;
+            if (!customer || !customer.current) { throw new Error('Cannot apply credit for unauthorized user'); }
+
+            const response = await IOCContainer.get(StoreCreditDao).getMyStoreCredit(storeCode);
+
+            if (response && response.code === HttpStatus.OK) {
+                const storeCreditDetails = await dispatch(getSingleStoreCredit(response.result.store_credit_id));
+                if (storeCreditDetails) {
+                    return storeCreditDetails;
+                }
+
                 return response.result;
             } else {
                 throw new Error('Not found');

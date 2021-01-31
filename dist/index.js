@@ -163,17 +163,17 @@ var StoreCreditDao = /** @class */ (function () {
     function StoreCreditDao(taskQueue) {
         this.taskQueue = taskQueue;
     }
-    StoreCreditDao.prototype.getStoreCredit = function (_a, token, storeCode) {
+    StoreCreditDao.prototype.getStoreCredit = function (_a, storeCode) {
         var customerId = _a.customerId, pageSize = _a.pageSize, currentPage = _a.currentPage, sortBy = _a.sortBy, sortDir = _a.sortDir;
         var query = {
             pageSize: pageSize,
             currentPage: currentPage,
             sortBy: sortBy,
             sortDir: sortDir,
-            token: token
+            storeCode: storeCode,
         };
         return this.taskQueue.execute({
-            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/' + customerId + '?' + query_string_1.default.stringify(query)),
+            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/' + customerId + '?' + query_string_1.default.stringify(query)) + '&token={{token}}',
             payload: {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
@@ -182,9 +182,9 @@ var StoreCreditDao = /** @class */ (function () {
             silent: true
         });
     };
-    StoreCreditDao.prototype.getSingleStoreCredit = function (storeCreditId, token) {
+    StoreCreditDao.prototype.getSingleStoreCredit = function (storeCreditId) {
         return this.taskQueue.execute({
-            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/single/' + storeCreditId),
+            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/single/' + storeCreditId + '?token={{token}}'),
             payload: {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
@@ -193,14 +193,13 @@ var StoreCreditDao = /** @class */ (function () {
             silent: true
         });
     };
-    StoreCreditDao.prototype.applyCredit = function (amount, cartId, token) {
+    StoreCreditDao.prototype.applyCredit = function (amount, cartId) {
         var query = {
             amount: amount,
-            cartId: cartId,
-            token: token
+            cartId: cartId
         };
         return this.taskQueue.execute({
-            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/apply?' + query_string_1.default.stringify(query)),
+            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/apply?' + query_string_1.default.stringify(query)) + '&token={{token}}',
             payload: {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -209,13 +208,26 @@ var StoreCreditDao = /** @class */ (function () {
             silent: true
         });
     };
-    StoreCreditDao.prototype.cancelCredit = function (cartId, token) {
+    StoreCreditDao.prototype.cancelCredit = function (cartId) {
         var query = {
-            cartId: cartId,
-            token: token
+            cartId: cartId
         };
         return this.taskQueue.execute({
-            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/cancel?' + query_string_1.default.stringify(query)),
+            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/cancel?' + query_string_1.default.stringify(query)) + '&token={{token}}',
+            payload: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
+            },
+            silent: true
+        });
+    };
+    StoreCreditDao.prototype.getMyStoreCredit = function (storeCode) {
+        var query = {
+            storeCode: storeCode
+        };
+        return this.taskQueue.execute({
+            url: libstorefront_1.URLTransform.getAbsoluteApiUrl('/api/vendor/store-credit/mine?' + query_string_1.default.stringify(query)) + '&token={{token}}',
             payload: {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -260,6 +272,7 @@ exports.StoreCreditPlugin = (function (libstorefront) {
     libstorefront.getIOCContainer().bind(dao_1.StoreCreditDao).to(dao_1.StoreCreditDao);
     libstorefront.getIOCContainer().bind(service_1.StoreCreditService).to(service_1.StoreCreditService);
     libstorefront.listenTo(libstorefront_1.HookType.AfterCoreModulesRegistered, function (lsf) {
+        debugger;
         lsf.registerModule(libstorefront_1.createLibstorefrontModule('storeCredit', store_credit_reducer_1.storeCreditReducer, store_credit_default_1.StoreCreditDefaultState));
     });
 });
@@ -329,6 +342,13 @@ var StoreCreditService = /** @class */ (function () {
      */
     StoreCreditService.prototype.cancelCredit = function () {
         return this.store.dispatch(store_credit_thunks_1.StoreCreditThunks.cancelStoreCredit());
+    };
+    /**
+     * Returns customer store credit
+     * @returns {Promise<StoreCredit>}
+     */
+    StoreCreditService.prototype.getMyStoreCredit = function () {
+        return this.store.dispatch(store_credit_thunks_1.StoreCreditThunks.getMyStoreCredit());
     };
     StoreCreditService = __decorate([
         inversify_1.injectable(),
@@ -486,19 +506,18 @@ var StoreCreditThunks;
 (function (StoreCreditThunks) {
     var _this = this;
     StoreCreditThunks.getStoreCredits = function (filter) { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var customer, token, storeCode, customerId, response, items, credit, e_1;
+        var customer, storeCode, customerId, response, items, credit, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 5, , 6]);
                     customer = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().user;
-                    token = customer.token;
                     storeCode = libstorefront_1.StoreViewHandler.currentStoreView().general.store_code;
-                    if (!customer || !token || !customer.current) {
+                    if (!customer || !customer.current) {
                         throw new Error('Cannot fetch store credits for unauthorized user');
                     }
                     customerId = customer.current.id;
-                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).getStoreCredit(__assign({ customerId: customerId }, filter), token, storeCode)];
+                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).getStoreCredit(__assign({ customerId: customerId }, filter), storeCode)];
                 case 1:
                     response = _a.sent();
                     if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
@@ -519,17 +538,16 @@ var StoreCreditThunks;
         });
     }); }; };
     StoreCreditThunks.getSingleStoreCredit = function (storeCreditId) { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var customer, token, response, credit, e_2;
+        var customer, response, credit, e_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 5, , 6]);
                     customer = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().user;
-                    token = customer.token;
-                    if (!customer || !token || !customer.current) {
+                    if (!customer || !customer.current) {
                         throw new Error('Cannot fetch store credits for unauthorized user');
                     }
-                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).getSingleStoreCredit(storeCreditId, token)];
+                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).getSingleStoreCredit(storeCreditId)];
                 case 1:
                     response = _a.sent();
                     if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
@@ -549,7 +567,7 @@ var StoreCreditThunks;
         });
     }); }; };
     StoreCreditThunks.applyStoreCredit = function (amount) { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var customer, cart, cartId, token, response, e_3;
+        var customer, cart, cartId, response, e_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -557,14 +575,13 @@ var StoreCreditThunks;
                     customer = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().user;
                     cart = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().cart;
                     cartId = cart.cartServerToken;
-                    token = customer.token;
                     if (!cartId) {
                         throw new Error('Cannot apply credit for undefined cart');
                     }
-                    if (!customer || !token || !customer.current) {
+                    if (!customer || !customer.current) {
                         throw new Error('Cannot apply credit for unauthorized user');
                     }
-                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).applyCredit(amount, cartId, token)];
+                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).applyCredit(amount, cartId)];
                 case 1:
                     response = _a.sent();
                     if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
@@ -583,7 +600,7 @@ var StoreCreditThunks;
         });
     }); }; };
     StoreCreditThunks.cancelStoreCredit = function () { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var customer, cart, cartId, token, response, e_4;
+        var customer, cart, cartId, response, e_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -591,11 +608,10 @@ var StoreCreditThunks;
                     customer = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().user;
                     cart = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().cart;
                     cartId = cart.cartServerToken;
-                    token = customer.token;
-                    if (!customer || !token || !customer.current) {
+                    if (!customer || !customer.current) {
                         throw new Error('Cannot apply credit for unauthorized user');
                     }
-                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).cancelCredit(cartId, token)];
+                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).cancelCredit(cartId)];
                 case 1:
                     response = _a.sent();
                     if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
@@ -609,6 +625,38 @@ var StoreCreditThunks;
                     e_4 = _a.sent();
                     libstorefront_1.Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e_4.message);
                     throw e_4;
+                case 6: return [2 /*return*/];
+            }
+        });
+    }); }; };
+    StoreCreditThunks.getMyStoreCredit = function () { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
+        var customer, storeCode, response, storeCreditDetails, e_5;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 5, , 6]);
+                    customer = libstorefront_1.IOCContainer.get(libstorefront_1.AbstractStore).getState().user;
+                    storeCode = libstorefront_1.StoreViewHandler.currentStoreView().general.store_code;
+                    if (!customer || !customer.current) {
+                        throw new Error('Cannot apply credit for unauthorized user');
+                    }
+                    return [4 /*yield*/, libstorefront_1.IOCContainer.get(dao_1.StoreCreditDao).getMyStoreCredit(storeCode)];
+                case 1:
+                    response = _a.sent();
+                    if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, dispatch(StoreCreditThunks.getSingleStoreCredit(response.result.store_credit_id))];
+                case 2:
+                    storeCreditDetails = _a.sent();
+                    if (storeCreditDetails) {
+                        return [2 /*return*/, storeCreditDetails];
+                    }
+                    return [2 /*return*/, response.result];
+                case 3: throw new Error('Not found');
+                case 4: return [3 /*break*/, 6];
+                case 5:
+                    e_5 = _a.sent();
+                    libstorefront_1.Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e_5.message);
+                    throw e_5;
                 case 6: return [2 /*return*/];
             }
         });

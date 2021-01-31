@@ -42,5 +42,13 @@ export class StoreCreditService {
         return this.store.dispatch(StoreCreditThunks.cancelStoreCredit());
     }
 
+    /**
+     * Returns customer store credit
+     * @returns {Promise<StoreCredit>}
+     */
+    public getMyStoreCredit (): Promise<StoreCredit> {
+        return this.store.dispatch(StoreCreditThunks.getMyStoreCredit());
+    }
+
     public constructor (@inject(AbstractStore) private store: AbstractStore<LibstorefrontInnerState>) {}
 }

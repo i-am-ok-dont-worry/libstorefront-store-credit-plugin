@@ -3,9 +3,10 @@ export declare class StoreCreditDao {
     private taskQueue;
     getStoreCredit({ customerId, pageSize, currentPage, sortBy, sortDir }: {
         customerId: string;
-    } & SearchCriteriaFilter, token: string, storeCode: string): Promise<Task>;
-    getSingleStoreCredit(storeCreditId: any, token: string): Promise<Task>;
-    applyCredit(amount: number, cartId: any, token: string): Promise<Task>;
-    cancelCredit(cartId: any, token: string): Promise<Task>;
+    } & SearchCriteriaFilter, storeCode: string): Promise<Task>;
+    getSingleStoreCredit(storeCreditId: any): Promise<Task>;
+    applyCredit(amount: number, cartId: any): Promise<Task>;
+    cancelCredit(cartId: any): Promise<Task>;
+    getMyStoreCredit(storeCode?: string): Promise<Task>;
     constructor(taskQueue: any);
 }

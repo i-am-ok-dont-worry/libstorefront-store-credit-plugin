@@ -272,7 +272,6 @@ exports.StoreCreditPlugin = (function (libstorefront) {
     libstorefront.getIOCContainer().bind(dao_1.StoreCreditDao).to(dao_1.StoreCreditDao);
     libstorefront.getIOCContainer().bind(service_1.StoreCreditService).to(service_1.StoreCreditService);
     libstorefront.listenTo(libstorefront_1.HookType.AfterCoreModulesRegistered, function (lsf) {
-        debugger;
         lsf.registerModule(libstorefront_1.createLibstorefrontModule('storeCredit', store_credit_reducer_1.storeCreditReducer, store_credit_default_1.StoreCreditDefaultState));
     });
 });

@@ -306,24 +306,21 @@ var store_credit_default_1 = __webpack_require__(/*! ./store/store-credit.defaul
  */
 exports.StoreCreditPlugin = (function (libstorefront) {
     var onCreditReset = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var state, creditSegment, value, service, res;
+        var state, creditSegment, value, service;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     state = libstorefront.getState();
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
-                    if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 3];
+                    if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 2];
                     value = Math.abs(99999999);
                     service = libstorefront.get(service_1.StoreCreditService);
                     return [4 /*yield*/, service.applyCredit(value)];
                 case 1:
-                    res = _a.sent();
-                    debugger;
-                    return [4 /*yield*/, libstorefront.CartService.recalculate({ quickSync: true })];
-                case 2:
                     _a.sent();
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    setTimeout(function () { return libstorefront.CartService.recalculate({ quickSync: true }); }, 50);
+                    _a.label = 2;
+                case 2: return [2 /*return*/];
             }
         });
     }); };

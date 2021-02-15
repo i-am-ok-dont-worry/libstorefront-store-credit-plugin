@@ -13,12 +13,10 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
     const onCreditReset = async () => {
         const state = libstorefront.getState();
         const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
-        debugger;
-        if (creditSegment && creditSegment.value > 0) {
+        if (creditSegment && creditSegment.value < 0) {
             const value = creditSegment.value;
-            debugger;
-            await libstorefront.get<StoreCreditService>(StoreCreditService).cancelCredit();
             await libstorefront.get<StoreCreditService>(StoreCreditService).applyCredit(value);
+            await libstorefront.CartService.recalculate({ quickSync: true });
         }
     };
 

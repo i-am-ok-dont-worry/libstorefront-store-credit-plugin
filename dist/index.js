@@ -312,14 +312,12 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                 case 0:
                     state = libstorefront.getState();
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
-                    debugger;
-                    if (!(creditSegment && creditSegment.value > 0)) return [3 /*break*/, 3];
+                    if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 3];
                     value = creditSegment.value;
-                    debugger;
-                    return [4 /*yield*/, libstorefront.get(service_1.StoreCreditService).cancelCredit()];
+                    return [4 /*yield*/, libstorefront.get(service_1.StoreCreditService).applyCredit(value)];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, libstorefront.get(service_1.StoreCreditService).applyCredit(value)];
+                    return [4 /*yield*/, libstorefront.CartService.recalculate({ quickSync: true })];
                 case 2:
                     _a.sent();
                     _a.label = 3;

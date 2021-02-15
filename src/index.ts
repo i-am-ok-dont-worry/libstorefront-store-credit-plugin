@@ -10,9 +10,29 @@ import { StoreCreditDefaultState } from './store/store-credit.default';
  * Lets customers spend their credit balance on product purchase.
  */
 export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
+    const onCreditReset = async () => {
+        const state = libstorefront.getState();
+        const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
+        debugger;
+        if (creditSegment && creditSegment.value > 0) {
+            const value = creditSegment.value;
+            debugger;
+            await libstorefront.get<StoreCreditService>(StoreCreditService).cancelCredit();
+            await libstorefront.get<StoreCreditService>(StoreCreditService).applyCredit(value);
+        }
+    };
+
     libstorefront.getIOCContainer().bind<StoreCreditDao>(StoreCreditDao).to(StoreCreditDao);
     libstorefront.getIOCContainer().bind<StoreCreditService>(StoreCreditService).to(StoreCreditService);
     libstorefront.listenTo(HookType.AfterCoreModulesRegistered, (lsf: LibStorefront) => {
         lsf.registerModule(createLibstorefrontModule('storeCredit', storeCreditReducer, StoreCreditDefaultState));
+        libstorefront = lsf;
+    });
+
+    libstorefront.listenTo(HookType.AfterCouponApplied, async () => {
+        await onCreditReset();
+    });
+    libstorefront.listenTo(HookType.AfterCouponRemoved, async () => {
+        await onCreditReset();
     });
 }) as LibstorefrontPlugin;

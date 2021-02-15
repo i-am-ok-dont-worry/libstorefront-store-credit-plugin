@@ -313,7 +313,7 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                     state = libstorefront.getState();
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 3];
-                    value = creditSegment.value;
+                    value = Math.abs(99999999);
                     return [4 /*yield*/, libstorefront.get(service_1.StoreCreditService).applyCredit(value)];
                 case 1:
                     _a.sent();

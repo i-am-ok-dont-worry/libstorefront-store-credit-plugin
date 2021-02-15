@@ -662,6 +662,7 @@ var StoreCreditThunks;
                 case 1:
                     response = _a.sent();
                     if (!(response && response.code === libstorefront_1.HttpStatus.OK)) return [3 /*break*/, 3];
+                    debugger;
                     return [4 /*yield*/, StoreCreditThunks.getStoreCredits({})];
                 case 2:
                     _a.sent();

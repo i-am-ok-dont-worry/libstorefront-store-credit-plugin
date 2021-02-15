@@ -306,7 +306,7 @@ var store_credit_default_1 = __webpack_require__(/*! ./store/store-credit.defaul
  */
 exports.StoreCreditPlugin = (function (libstorefront) {
     var onCreditReset = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var state, creditSegment, res, grandTotal, value, service;
+        var state, creditSegment, base_grand_total, value, service;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -315,11 +315,9 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 4];
                     return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 1:
-                    res = _a.sent();
-                    debugger;
-                    grandTotal = libstorefront.getState().cart.platformTotalSegments.find(function (segment) { return segment.code === 'grand_total'; });
-                    if (!grandTotal) return [3 /*break*/, 4];
-                    value = Math.abs(grandTotal.value);
+                    base_grand_total = (_a.sent()).base_grand_total;
+                    if (!base_grand_total) return [3 /*break*/, 4];
+                    value = Math.abs(base_grand_total);
                     service = libstorefront.get(service_1.StoreCreditService);
                     return [4 /*yield*/, service.applyCredit(value)];
                 case 2:

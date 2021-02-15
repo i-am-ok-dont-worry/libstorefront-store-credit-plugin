@@ -16,8 +16,8 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
         if (creditSegment && creditSegment.value < 0) {
             const value = Math.abs(99999999);
             const service = libstorefront.get<StoreCreditService>(StoreCreditService);
-            await service.applyCredit(value);
-
+            const res = await service.applyCredit(value);
+            debugger;
             await libstorefront.CartService.recalculate({ quickSync: true });
         }
     };

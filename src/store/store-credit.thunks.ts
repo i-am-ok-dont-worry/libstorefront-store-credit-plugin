@@ -68,7 +68,6 @@ export namespace StoreCreditThunks {
             const response = await IOCContainer.get(StoreCreditDao).applyCredit(amount, cartId);
 
             if (response && response.code === HttpStatus.OK) {
-                debugger;
                 await StoreCreditThunks.getStoreCredits({});
                 return response.result;
             } else {

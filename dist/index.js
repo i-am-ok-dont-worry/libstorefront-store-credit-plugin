@@ -313,9 +313,10 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                     state = libstorefront.getState();
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, libstorefront.CartService.recalculate({ force: true, quickSync: true })];
+                    return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 1:
                     _a.sent();
+                    debugger;
                     grandTotal = libstorefront.getState().cart.platformTotalSegments.find(function (segment) { return segment.code === 'grand_total'; });
                     if (!grandTotal) return [3 /*break*/, 4];
                     value = Math.abs(grandTotal.value);
@@ -323,7 +324,7 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                     return [4 /*yield*/, service.applyCredit(value)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, libstorefront.CartService.recalculate({ force: true, quickSync: true })];
+                    return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 3:
                     _a.sent();
                     _a.label = 4;

@@ -10,16 +10,21 @@ import { StoreCreditDefaultState } from './store/store-credit.default';
  * Lets customers spend their credit balance on product purchase.
  */
 export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
-    /*const onCreditReset = async () => {
+    const onCreditReset = async () => {
         const state = libstorefront.getState();
         const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
         if (creditSegment && creditSegment.value < 0) {
-            const value = Math.abs(99999999);
-            const service = libstorefront.get<StoreCreditService>(StoreCreditService);
-            await service.applyCredit(value);
-            setTimeout(() => libstorefront.CartService.recalculate({ quickSync: true }), 50);
+            await libstorefront.CartService.recalculate({ force: true, quickSync: true });
+            const grandTotal = libstorefront.getState().cart.platformTotalSegments.find((segment) => segment.code === 'grand_total');
+
+            if (grandTotal) {
+                const value = Math.abs(grandTotal.value);
+                const service = libstorefront.get<StoreCreditService>(StoreCreditService);
+                await service.applyCredit(value);
+                await libstorefront.CartService.recalculate({ force: true, quickSync: true });
+            }
         }
-    };*/
+    };
 
     libstorefront.getIOCContainer().bind<StoreCreditDao>(StoreCreditDao).to(StoreCreditDao);
     libstorefront.getIOCContainer().bind<StoreCreditService>(StoreCreditService).to(StoreCreditService);
@@ -28,10 +33,10 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
         libstorefront = lsf;
     });
 
-    /*libstorefront.listenTo(HookType.AfterCouponApplied, async () => {
+    libstorefront.listenTo(HookType.AfterCouponApplied, async () => {
         await onCreditReset();
     });
     libstorefront.listenTo(HookType.AfterCouponRemoved, async () => {
         await onCreditReset();
-    });*/
+    });
 }) as LibstorefrontPlugin;

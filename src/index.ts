@@ -14,10 +14,10 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
         const state = libstorefront.getState();
         const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
         if (creditSegment && creditSegment.value < 0) {
-            const { base_subtotal } = await libstorefront.CartService.syncTotals();
+            const { subtotal_incl_tax } = await libstorefront.CartService.syncTotals();
 
-            if (base_subtotal) {
-                const value = Math.abs(base_subtotal);
+            if (subtotal_incl_tax) {
+                const value = Math.abs(subtotal_incl_tax);
                 const service = libstorefront.get<StoreCreditService>(StoreCreditService);
                 await service.applyCredit(value);
                 await libstorefront.CartService.syncTotals();

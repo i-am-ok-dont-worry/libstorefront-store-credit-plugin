@@ -306,26 +306,26 @@ var store_credit_default_1 = __webpack_require__(/*! ./store/store-credit.defaul
  */
 exports.StoreCreditPlugin = (function (libstorefront) {
     var onCreditReset = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var state, creditSegment, subtotal_incl_tax, value, service;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var state, creditSegment, _a, subtotal_incl_tax, subtotal_with_discount, coupon_code, value, service;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     state = libstorefront.getState();
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 4];
                     return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 1:
-                    subtotal_incl_tax = (_a.sent()).subtotal_incl_tax;
+                    _a = _b.sent(), subtotal_incl_tax = _a.subtotal_incl_tax, subtotal_with_discount = _a.subtotal_with_discount, coupon_code = _a.coupon_code;
                     if (!subtotal_incl_tax) return [3 /*break*/, 4];
-                    value = Math.abs(subtotal_incl_tax);
+                    value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount) : Math.abs(subtotal_incl_tax);
                     service = libstorefront.get(service_1.StoreCreditService);
                     return [4 /*yield*/, service.applyCredit(value)];
                 case 2:
-                    _a.sent();
+                    _b.sent();
                     return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 3:
-                    _a.sent();
-                    _a.label = 4;
+                    _b.sent();
+                    _b.label = 4;
                 case 4: return [2 /*return*/];
             }
         });

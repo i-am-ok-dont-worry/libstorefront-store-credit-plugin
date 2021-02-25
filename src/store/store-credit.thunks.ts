@@ -133,13 +133,13 @@ export namespace StoreCreditThunks {
         if (creditSegment && creditSegment.value < 0) {
             const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total } = await IOCContainer.get(CartService).syncTotals();
 
-            if (base_grand_total > get(getState(), 'storeCredit.current.store_credit', base_grand_total)) {
+            /*if (base_grand_total > get(getState(), 'storeCredit.current.store_credit', base_grand_total)) {
                 await dispatch(cancelStoreCredit());
                 return;
-            }
+            }*/
 
             if (subtotal_incl_tax) {
-                const value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(subtotal_incl_tax);
+                const value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(base_grand_total);
                 await dispatch(applyStoreCredit(value));
                 await IOCContainer.get(CartService).syncTotals();
             }

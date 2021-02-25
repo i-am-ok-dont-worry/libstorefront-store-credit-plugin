@@ -19,7 +19,6 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
         if (creditSegment && creditSegment.value < 0) {
             const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total } = await libstorefront.CartService.syncTotals();
 
-            console.warn('Store credit: ', state, base_grand_total, get(state, 'storeCredit.current.store_credit', base_grand_total));
             if (base_grand_total > get(state, 'storeCredit.current.store_credit', base_grand_total)) {
                 await service.cancelCredit();
                 return;
@@ -42,6 +41,4 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
 
     libstorefront.listenTo(HookType.AfterCouponApplied, () => onCreditReset());
     libstorefront.listenTo(HookType.AfterCouponRemoved, () => onCreditReset());
-    libstorefront.listenTo(HookType.AfterShippingMethodSelected, () => onCreditReset());
-    libstorefront.listenTo(HookType.AfterPaymentMethodSelected, () => onCreditReset());
 }) as LibstorefrontPlugin;

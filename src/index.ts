@@ -43,5 +43,4 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
 
     libstorefront.listenTo(HookType.AfterCouponApplied, () => onCreditReset());
     libstorefront.listenTo(HookType.AfterCouponRemoved, () => onCreditReset());
-    libstorefront.listenTo(HookType.AfterShippingMethodSelected, () => onCreditReset());
 }) as LibstorefrontPlugin;

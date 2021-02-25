@@ -13,6 +13,8 @@ import get from 'lodash/get';
 export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
     const onCreditReset = async () => {
         const state = libstorefront.getState();
+        if (!state.user.token || state.user.token === '') { return; }
+
         const service = libstorefront.get<StoreCreditService>(StoreCreditService);
         const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
 

@@ -315,6 +315,9 @@ exports.StoreCreditPlugin = (function (libstorefront) {
             switch (_b.label) {
                 case 0:
                     state = libstorefront.getState();
+                    if (!state.user.token || state.user.token === '') {
+                        return [2 /*return*/];
+                    }
                     service = libstorefront.get(service_1.StoreCreditService);
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 6];

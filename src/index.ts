@@ -1,9 +1,9 @@
-import { createLibstorefrontModule, HookType, LibStorefront } from '@grupakmk/libstorefront';
-import { LibstorefrontPlugin } from '@grupakmk/libstorefront/dist/config/types/libstorefront-plugin';
-import { StoreCreditDao } from './dao';
-import { StoreCreditService } from './service';
-import { storeCreditReducer } from './store/store-credit.reducer';
-import { StoreCreditDefaultState } from './store/store-credit.default';
+import {createLibstorefrontModule, HookType, LibStorefront} from '@grupakmk/libstorefront';
+import {LibstorefrontPlugin} from '@grupakmk/libstorefront/dist/config/types/libstorefront-plugin';
+import {StoreCreditDao} from './dao';
+import {StoreCreditService} from './service';
+import {storeCreditReducer} from './store/store-credit.reducer';
+import {StoreCreditDefaultState} from './store/store-credit.default';
 import get from 'lodash/get';
 
 /**
@@ -43,4 +43,5 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
 
     libstorefront.listenTo(HookType.AfterCouponApplied, () => onCreditReset());
     libstorefront.listenTo(HookType.AfterCouponRemoved, () => onCreditReset());
+    libstorefront.listenTo(HookType.AfterShippingMethodSelected, () => onCreditReset());
 }) as LibstorefrontPlugin;

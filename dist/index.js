@@ -351,6 +351,7 @@ exports.StoreCreditPlugin = (function (libstorefront) {
     });
     libstorefront.listenTo(libstorefront_1.HookType.AfterCouponApplied, function () { return onCreditReset(); });
     libstorefront.listenTo(libstorefront_1.HookType.AfterCouponRemoved, function () { return onCreditReset(); });
+    libstorefront.listenTo(libstorefront_1.HookType.AfterShippingMethodSelected, function () { return onCreditReset(); });
 });
 
 

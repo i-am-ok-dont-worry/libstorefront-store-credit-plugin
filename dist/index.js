@@ -336,26 +336,10 @@ exports.StoreCreditPlugin = (function (libstorefront) {
         lsf.registerModule(libstorefront_1.createLibstorefrontModule('storeCredit', store_credit_reducer_1.storeCreditReducer, store_credit_default_1.StoreCreditDefaultState));
         libstorefront = lsf;
     });
-    libstorefront.listenTo(libstorefront_1.HookType.AfterCouponApplied, function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, onCreditReset()];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    libstorefront.listenTo(libstorefront_1.HookType.AfterCouponRemoved, function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, onCreditReset()];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
+    libstorefront.listenTo(libstorefront_1.HookType.AfterCouponApplied, function () { return onCreditReset(); });
+    libstorefront.listenTo(libstorefront_1.HookType.AfterCouponRemoved, function () { return onCreditReset(); });
+    libstorefront.listenTo(libstorefront_1.HookType.AfterShippingMethodSelected, function () { return onCreditReset(); });
+    libstorefront.listenTo(libstorefront_1.HookType.AfterPaymentMethodSelected, function () { return onCreditReset(); });
 });
 
 

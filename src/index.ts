@@ -32,10 +32,8 @@ export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
         libstorefront = lsf;
     });
 
-    libstorefront.listenTo(HookType.AfterCouponApplied, async () => {
-        await onCreditReset();
-    });
-    libstorefront.listenTo(HookType.AfterCouponRemoved, async () => {
-        await onCreditReset();
-    });
+    libstorefront.listenTo(HookType.AfterCouponApplied, () => onCreditReset());
+    libstorefront.listenTo(HookType.AfterCouponRemoved, () => onCreditReset());
+    libstorefront.listenTo(HookType.AfterShippingMethodSelected, () => onCreditReset());
+    libstorefront.listenTo(HookType.AfterPaymentMethodSelected, () => onCreditReset());
 }) as LibstorefrontPlugin;

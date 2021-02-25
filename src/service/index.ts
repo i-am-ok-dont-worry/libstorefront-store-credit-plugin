@@ -35,6 +35,13 @@ export class StoreCreditService {
     }
 
     /**
+     * Reapplies store credit to the max amount of order. If available
+     */
+    public reapply (): Promise<void> {
+        return this.store.dispatch(StoreCreditThunks.reapplyCredit());
+    }
+
+    /**
      * Cancels customer credit on the current cart
      * @returns {Promise<void>}
      */

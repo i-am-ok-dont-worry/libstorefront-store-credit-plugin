@@ -22,6 +22,10 @@ export declare class StoreCreditService {
      */
     applyCredit(amount: number): Promise<void>;
     /**
+     * Reapplies store credit to the max amount of order. If available
+     */
+    reapply(): Promise<void>;
+    /**
      * Cancels customer credit on the current cart
      * @returns {Promise<void>}
      */

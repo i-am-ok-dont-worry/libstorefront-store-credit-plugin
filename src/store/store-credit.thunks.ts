@@ -1,5 +1,5 @@
 import {
-    AbstractStore,
+    AbstractStore, CartService,
     HttpStatus,
     IOCContainer,
     Logger,
@@ -8,6 +8,7 @@ import {
 } from '@grupakmk/libstorefront';
 import { StoreCreditDao } from '../dao';
 import { StoreCreditActions } from './store-credit.actions';
+import get from 'lodash/get';
 
 export namespace StoreCreditThunks {
     export const getStoreCredits = (filter: SearchCriteriaFilter) => async (dispatch, getState) => {
@@ -121,6 +122,27 @@ export namespace StoreCreditThunks {
         } catch (e) {
             Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
             throw e;
+        }
+    };
+
+    export const reapplyCredit = () => async (dispatch, getState) => {
+        if (!getState().user.token || getState().user.token === '') { return; }
+
+        const creditSegment = getState().cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
+
+        if (creditSegment && creditSegment.value < 0) {
+            const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total } = await IOCContainer.get(CartService).syncTotals();
+
+            if (base_grand_total > get(getState(), 'storeCredit.current.store_credit', base_grand_total)) {
+                await dispatch(cancelStoreCredit());
+                return;
+            }
+
+            if (subtotal_incl_tax) {
+                const value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(subtotal_incl_tax);
+                await dispatch(applyStoreCredit(value));
+                await IOCContainer.get(CartService).syncTotals();
+            }
         }
     };
 }

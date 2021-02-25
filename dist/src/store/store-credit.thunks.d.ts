@@ -5,4 +5,5 @@ export declare namespace StoreCreditThunks {
     const applyStoreCredit: (amount: number) => (dispatch: any, getState: any) => Promise<any>;
     const cancelStoreCredit: () => (dispatch: any, getState: any) => Promise<any>;
     const getMyStoreCredit: () => (dispatch: any, getState: any) => Promise<any>;
+    const reapplyCredit: () => (dispatch: any, getState: any) => Promise<void>;
 }

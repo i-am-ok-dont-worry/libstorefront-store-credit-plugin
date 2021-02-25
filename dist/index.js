@@ -321,6 +321,7 @@ exports.StoreCreditPlugin = (function (libstorefront) {
                     return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 1:
                     _a = _b.sent(), subtotal_incl_tax = _a.subtotal_incl_tax, subtotal_with_discount = _a.subtotal_with_discount, tax_amount = _a.tax_amount, coupon_code = _a.coupon_code, shipping_amount = _a.shipping_amount, base_grand_total = _a.base_grand_total;
+                    console.warn('Store credit: ', state, base_grand_total, get_1.default(state, 'storeCredit.current.store_credit', base_grand_total));
                     if (!(base_grand_total > get_1.default(state, 'storeCredit.current.store_credit', base_grand_total))) return [3 /*break*/, 3];
                     return [4 /*yield*/, service.cancelCredit()];
                 case 2:

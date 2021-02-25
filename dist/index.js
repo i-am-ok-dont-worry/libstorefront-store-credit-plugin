@@ -293,6 +293,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreCreditPlugin = void 0;
 var libstorefront_1 = __webpack_require__(/*! @grupakmk/libstorefront */ "@grupakmk/libstorefront");
@@ -300,33 +303,40 @@ var dao_1 = __webpack_require__(/*! ./dao */ "./src/dao/index.ts");
 var service_1 = __webpack_require__(/*! ./service */ "./src/service/index.ts");
 var store_credit_reducer_1 = __webpack_require__(/*! ./store/store-credit.reducer */ "./src/store/store-credit.reducer.ts");
 var store_credit_default_1 = __webpack_require__(/*! ./store/store-credit.default */ "./src/store/store-credit.default.ts");
+var get_1 = __importDefault(__webpack_require__(/*! lodash/get */ "lodash/get"));
 /**
  * Provides registered customers with a flexible credit system.
  * Lets customers spend their credit balance on product purchase.
  */
 exports.StoreCreditPlugin = (function (libstorefront) {
     var onCreditReset = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var state, creditSegment, _a, subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, value, service;
+        var state, service, creditSegment, _a, subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total, value;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     state = libstorefront.getState();
+                    service = libstorefront.get(service_1.StoreCreditService);
                     creditSegment = state.cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
-                    if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 4];
+                    if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 6];
                     return [4 /*yield*/, libstorefront.CartService.syncTotals()];
                 case 1:
-                    _a = _b.sent(), subtotal_incl_tax = _a.subtotal_incl_tax, subtotal_with_discount = _a.subtotal_with_discount, tax_amount = _a.tax_amount, coupon_code = _a.coupon_code, shipping_amount = _a.shipping_amount;
-                    if (!subtotal_incl_tax) return [3 /*break*/, 4];
-                    value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(subtotal_incl_tax);
-                    service = libstorefront.get(service_1.StoreCreditService);
-                    return [4 /*yield*/, service.applyCredit(value)];
+                    _a = _b.sent(), subtotal_incl_tax = _a.subtotal_incl_tax, subtotal_with_discount = _a.subtotal_with_discount, tax_amount = _a.tax_amount, coupon_code = _a.coupon_code, shipping_amount = _a.shipping_amount, base_grand_total = _a.base_grand_total;
+                    if (!(base_grand_total > get_1.default(state, 'storeCredit.current.store_credit', base_grand_total))) return [3 /*break*/, 3];
+                    return [4 /*yield*/, service.cancelCredit()];
                 case 2:
                     _b.sent();
-                    return [4 /*yield*/, libstorefront.CartService.syncTotals()];
+                    return [2 /*return*/];
                 case 3:
+                    if (!subtotal_incl_tax) return [3 /*break*/, 6];
+                    value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(subtotal_incl_tax);
+                    return [4 /*yield*/, service.applyCredit(value)];
+                case 4:
                     _b.sent();
-                    _b.label = 4;
-                case 4: return [2 /*return*/];
+                    return [4 /*yield*/, libstorefront.CartService.syncTotals()];
+                case 5:
+                    _b.sent();
+                    _b.label = 6;
+                case 6: return [2 /*return*/];
             }
         });
     }); };
@@ -764,6 +774,17 @@ module.exports = require("@grupakmk/libstorefront");
 /***/ (function(module, exports) {
 
 module.exports = require("inversify");
+
+/***/ }),
+
+/***/ "lodash/get":
+/*!*****************************!*\
+  !*** external "lodash/get" ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("lodash/get");
 
 /***/ }),
 

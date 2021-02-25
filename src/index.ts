@@ -4,6 +4,7 @@ import { StoreCreditDao } from './dao';
 import { StoreCreditService } from './service';
 import { storeCreditReducer } from './store/store-credit.reducer';
 import { StoreCreditDefaultState } from './store/store-credit.default';
+import get from 'lodash/get';
 
 /**
  * Provides registered customers with a flexible credit system.
@@ -12,13 +13,19 @@ import { StoreCreditDefaultState } from './store/store-credit.default';
 export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
     const onCreditReset = async () => {
         const state = libstorefront.getState();
+        const service = libstorefront.get<StoreCreditService>(StoreCreditService);
         const creditSegment = state.cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
+
         if (creditSegment && creditSegment.value < 0) {
-            const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount } = await libstorefront.CartService.syncTotals();
+            const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total } = await libstorefront.CartService.syncTotals();
+
+            if (base_grand_total > get(state, 'storeCredit.current.store_credit', base_grand_total)) {
+                await service.cancelCredit();
+                return;
+            }
 
             if (subtotal_incl_tax) {
                 const value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(subtotal_incl_tax);
-                const service = libstorefront.get<StoreCreditService>(StoreCreditService);
                 await service.applyCredit(value);
                 await libstorefront.CartService.syncTotals();
             }

@@ -278,10 +278,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@grupakmk/libstorefront@^1.0.4":
-  version "1.0.5"
-  resolved "https://gitlab.com/api/v4/projects/20934102/packages/npm/@grupakmk/libstorefront/-/@grupakmk/libstorefront-1.0.5.tgz#4f712520f9ec232a63aa31df9327b8e72f06f61d"
-  integrity sha1-T3ElIPnsIypjqjHfkye45y8G9h0=
+"@grupakmk/libstorefront@^2.0.0":
+  version "2.0.0"
+  resolved "https://npm.grupakmk.pl/@grupakmk%2flibstorefront/-/libstorefront-2.0.0.tgz#4b46ea2db623efe0921506b4eaac9d0dd79b460a"
+  integrity sha512-1x3nk6wa/6d3tiZ80AcmxN6UcQI2IzSEJMKcMdu8+6trLpJU6mVqG6OmVIq5+EIz7jPWUjbDiUUJIX+1UBZBQA==
   dependencies:
     "@reduxjs/toolkit" "^1.4.0"
     copy-webpack-plugin "^6.1.0"

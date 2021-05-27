@@ -1,6 +1,6 @@
 {
   "name": "@grupakmk/libstorefront-store-credit-plugin",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Store credit plugin for Libstorefront",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://gitlab.com/mateuspytel/libstorefront-plugin-template#readme",
   "dependencies": {
-    "@grupakmk/libstorefront": "^1.0.5"
+    "@grupakmk/libstorefront": "^2.0.0"
   },
   "devDependencies": {
     "babel-loader": "^8.2.2",

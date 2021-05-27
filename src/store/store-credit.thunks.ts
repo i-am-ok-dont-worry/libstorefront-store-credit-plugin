@@ -32,7 +32,7 @@ export namespace StoreCreditThunks {
             }
 
         } catch (e) {
-            Logger.info('Cannot fetch store credits: ', 'STORE-CREDIT-PLUGIN', e.message);
+            Logger.info('Cannot fetch store credits: ', '@grupakmk/libstorefront-store-credit-plugin', e.message);
             throw e;
         }
     };
@@ -54,7 +54,7 @@ export namespace StoreCreditThunks {
             }
 
         } catch (e) {
-            Logger.info('Cannot fetch store credits: ', 'STORE-CREDIT-PLUGIN', e.message);
+            Logger.info('Cannot fetch store credits: ', '@grupakmk/libstorefront-store-credit-plugin', e.message);
             throw e;
         }
     };
@@ -76,7 +76,7 @@ export namespace StoreCreditThunks {
                 throw new Error('Not found');
             }
         } catch (e) {
-            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            Logger.info('Cannot apply store credit: ', '@grupakmk/libstorefront-store-credit-plugin', e.message);
             throw e;
         }
     };
@@ -97,7 +97,7 @@ export namespace StoreCreditThunks {
                 throw new Error('Not found');
             }
         } catch (e) {
-            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            Logger.info('Cannot apply store credit: ', '@grupakmk/libstorefront-store-credit-plugin', e.message);
             throw e;
         }
     };
@@ -121,7 +121,7 @@ export namespace StoreCreditThunks {
                 throw new Error('Not found');
             }
         } catch (e) {
-            Logger.info('Cannot apply store credit: ', 'STORE-CREDIT-PLUGIN', e.message);
+            Logger.info('Cannot apply store credit: ', '@grupakmk/libstorefront-store-credit-plugin', e.message);
             throw e;
         }
     };

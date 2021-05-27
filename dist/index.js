@@ -719,7 +719,7 @@ var StoreCreditThunks;
         });
     }); }; };
     StoreCreditThunks.reapplyCredit = function () { return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var creditSegment, _a, subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total, value;
+        var creditSegment, taxConfiguration, pricesIncludingTax, _a, subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total, value;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -727,12 +727,14 @@ var StoreCreditThunks;
                         return [2 /*return*/];
                     }
                     creditSegment = getState().cart.platformTotalSegments.find(function (segment) { return segment.code === 'amstorecredit'; });
+                    taxConfiguration = libstorefront_1.StoreViewHandler.currentStoreView().tax;
+                    pricesIncludingTax = taxConfiguration.pricesIncludingTax === libstorefront_1.TaxCalculateType.INCLUDING_TAX;
                     if (!(creditSegment && creditSegment.value < 0)) return [3 /*break*/, 4];
                     return [4 /*yield*/, libstorefront_1.IOCContainer.get(libstorefront_1.CartService).syncTotals()];
                 case 1:
                     _a = _b.sent(), subtotal_incl_tax = _a.subtotal_incl_tax, subtotal_with_discount = _a.subtotal_with_discount, tax_amount = _a.tax_amount, coupon_code = _a.coupon_code, shipping_amount = _a.shipping_amount, base_grand_total = _a.base_grand_total;
                     if (!subtotal_incl_tax) return [3 /*break*/, 4];
-                    value = subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(base_grand_total);
+                    value = !pricesIncludingTax && subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(base_grand_total);
                     return [4 /*yield*/, dispatch(StoreCreditThunks.applyStoreCredit(value))];
                 case 2:
                     _b.sent();

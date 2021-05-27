@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { AbstractStore, LibstorefrontInnerState, SearchCriteriaFilter } from '@grupakmk/libstorefront';
 import { StoreCreditThunks } from '../store/store-credit.thunks';
-import { StoreCredit } from '../types';
+import {StoreCredit, StoreCreditPluginOptions} from '../types';
 
 @injectable()
 export class StoreCreditService {
@@ -37,8 +37,8 @@ export class StoreCreditService {
     /**
      * Reapplies store credit to the max amount of order. If available
      */
-    public reapply (): Promise<void> {
-        return this.store.dispatch(StoreCreditThunks.reapplyCredit());
+    public reapply (options: StoreCreditPluginOptions): Promise<void> {
+        return this.store.dispatch(StoreCreditThunks.reapplyCredit(options));
     }
 
     /**

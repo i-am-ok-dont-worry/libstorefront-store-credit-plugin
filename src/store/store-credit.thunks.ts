@@ -1,14 +1,15 @@
 import {
-    AbstractStore, CartService,
+    AbstractStore,
+    CartService,
     HttpStatus,
     IOCContainer,
     Logger,
     SearchCriteriaFilter,
-    StoreViewHandler
+    StoreViewHandler,
+    TaxCalculateType
 } from '@grupakmk/libstorefront';
 import { StoreCreditDao } from '../dao';
 import { StoreCreditActions } from './store-credit.actions';
-import get from 'lodash/get';
 
 export namespace StoreCreditThunks {
     export const getStoreCredits = (filter: SearchCriteriaFilter) => async (dispatch, getState) => {
@@ -56,7 +57,7 @@ export namespace StoreCreditThunks {
             Logger.info('Cannot fetch store credits: ', 'STORE-CREDIT-PLUGIN', e.message);
             throw e;
         }
-    }
+    };
 
     export const applyStoreCredit = (amount: number) => async (dispatch, getState) => {
         try {
@@ -125,16 +126,18 @@ export namespace StoreCreditThunks {
         }
     };
 
-    export const reapplyCredit = (options) => async (dispatch, getState) => {
+    export const reapplyCredit = () => async (dispatch, getState) => {
         if (!getState().user.token || getState().user.token === '') { return; }
 
         const creditSegment = getState().cart.platformTotalSegments.find((segment) => segment.code === 'amstorecredit');
+        const taxConfiguration = StoreViewHandler.currentStoreView().tax;
+        const pricesIncludingTax = taxConfiguration.pricesIncludingTax === TaxCalculateType.INCLUDING_TAX;
 
         if (creditSegment && creditSegment.value < 0) {
             const { subtotal_incl_tax, subtotal_with_discount, tax_amount, coupon_code, shipping_amount, base_grand_total } = await IOCContainer.get(CartService).syncTotals();
 
             if (subtotal_incl_tax) {
-                const value = !options.catalogPricesIncludeTax && subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(base_grand_total);
+                const value = !pricesIncludingTax && subtotal_with_discount && coupon_code ? Math.abs(subtotal_with_discount + (tax_amount || 0) + (shipping_amount || 0)) : Math.abs(base_grand_total);
                 await dispatch(applyStoreCredit(value));
                 await IOCContainer.get(CartService).syncTotals();
             }

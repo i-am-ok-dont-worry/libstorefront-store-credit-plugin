@@ -4,16 +4,15 @@ import { StoreCreditDao } from './dao';
 import { StoreCreditService } from './service';
 import { storeCreditReducer } from './store/store-credit.reducer';
 import { StoreCreditDefaultState } from './store/store-credit.default';
-import {StoreCreditPluginOptions} from "./types";
 
 /**
  * Provides registered customers with a flexible credit system.
  * Lets customers spend their credit balance on product purchase.
  */
-export const StoreCreditPlugin = (options: StoreCreditPluginOptions) => ((libstorefront: LibStorefront) => {
+export const StoreCreditPlugin = ((libstorefront: LibStorefront) => {
     const onCreditReset = async () => {
         const service = libstorefront.get<StoreCreditService>(StoreCreditService);
-        await service.reapply(options);
+        await service.reapply();
     };
 
     libstorefront.getIOCContainer().bind<StoreCreditDao>(StoreCreditDao).to(StoreCreditDao);
